@@ -1,0 +1,9 @@
+language: go
+go:
+  - 1.6.x
+  - 1.7.x
+  - master
+install:
+  - go get github.com/labstack/echo
+  - go get github.com/newrelic/go-agent
+  - go get github.com/stretchr/testify/suite
