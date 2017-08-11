@@ -23,7 +23,7 @@ import (
 func main() {
 	e := echo.New()
 	er := new(echorelic.EchoRelic)
-	er.Init("__APP_NAME", "__NEW_RELIC_LICENSE_KEY")
+	er.Init("__APP_NAME__", "__NEW_RELIC_LICENSE_KEY__")
 	e.Use(er.EchoRelicMiddleware())
 
 	e.GET("/", func(c echo.Context) error {
