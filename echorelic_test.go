@@ -11,12 +11,12 @@ import (
 
 type TestSuite struct {
 	suite.Suite
-	r *Relic
+	r *EchoRelic
 	e *echo.Echo
 }
 
 func (suite *TestSuite) SetupTest() {
-	suite.r = new(Relic)
+	suite.r = new(EchoRelic)
 	suite.e = echo.New()
 }
 
