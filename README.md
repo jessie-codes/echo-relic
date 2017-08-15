@@ -17,14 +17,15 @@ package main
 
 import (
 	"github.com/labstack/echo"
+	"github.com/newrelic/go-agent"
 	"github.com/jessie-codes/echo-relic"
 )
 
 func main() {
 	e := echo.New()
-	er := new(echorelic.EchoRelic)
-	er.Init("__APP_NAME__", "__NEW_RELIC_LICENSE_KEY__")
-	e.Use(er.EchoRelicMiddleware())
+	config := newrelic.NewConfig("__APP_NAME__", "__NEW_RELIC_LICENSE_KEY__")
+	app, _ := newrelic.NewApplication(config)
+	e.Use(echorelic.Middleware(app))
 
 	e.GET("/", func(c echo.Context) error {
 		txn := c.Get("transaction")

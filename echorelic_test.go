@@ -11,34 +11,25 @@ import (
 
 type TestSuite struct {
 	suite.Suite
-	r *EchoRelic
-	e *echo.Echo
+	app newrelic.Application
+	e   *echo.Echo
 }
 
 func (suite *TestSuite) SetupTest() {
-	suite.r = new(EchoRelic)
+	config := newrelic.NewConfig("test", "1234567890123456789012345678901234567890")
+	app, _ := newrelic.NewApplication(config)
+	suite.app = app
 	suite.e = echo.New()
 }
 
-func (suite *TestSuite) TestInitNoLicense() {
-	_, err := suite.r.Init("test", "")
-	suite.Error(err)
-}
-
-func (suite *TestSuite) TestInitWithLicense() {
-	app, err := suite.r.Init("test", "1234567890123456789012345678901234567890")
-	suite.NoError(err)
-	suite.NotEmpty(app)
-}
-
-func (suite *TestSuite) TestEchoRelicMiddleware() {
-	m := suite.r.EchoRelicMiddleware()
+func (suite *TestSuite) TestMiddleware() {
+	m := Middleware(suite.app)
 	suite.NotEmpty(m)
 }
 
 func (suite *TestSuite) TestUseMiddleware() {
 	var t newrelic.Transaction
-	suite.e.Use(suite.r.EchoRelicMiddleware())
+	suite.e.Use(Middleware(suite.app))
 	req := httptest.NewRequest(echo.GET, "/", nil)
 	res := httptest.NewRecorder()
 	c := suite.e.NewContext(req, res)

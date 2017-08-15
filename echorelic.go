@@ -5,27 +5,21 @@ import (
 	"github.com/newrelic/go-agent"
 )
 
-// EchoRelic contains the connection to New Relic
-type EchoRelic struct {
-	app  newrelic.Application
-	name string
-}
+var ctxKey = "newRelicTransaction"
 
-// Init is used to create a newrelic.Application
-func (r *EchoRelic) Init(appName string, licenseKey string) (newrelic.Application, error) {
-	config := newrelic.NewConfig(appName, licenseKey)
-	app, err := newrelic.NewApplication(config)
-	r.app = app
-	r.name = appName
-	return app, err
-}
-
-// EchoRelicMiddleware starts a newrelic.Transactions and adds it to the request's echo.Context
-func (r *EchoRelic) EchoRelicMiddleware() echo.MiddlewareFunc {
+// Middleware starts a newrelic.Transactions and adds it to the request's echo.Context
+func Middleware(app newrelic.Application) echo.MiddlewareFunc {
 	return func(h echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			txn := r.app.StartTransaction(c.Path(), c.Response(), c.Request())
-			c.Set("RelicTransaction", txn)
+			name := c.Request().Method + " " + c.Path()
+			txn := app.StartTransaction(name, c.Response().Writer, c.Request())
+			txn.AddAttribute("RealIP", c.RealIP())
+			txn.AddAttribute("IsTLS", c.IsTLS())
+			txn.AddAttribute("IsWebSocket", c.IsWebSocket())
+			txn.AddAttribute("Query", c.QueryString())
+			defer txn.End()
+
+			c.Set(ctxKey, txn)
 			return h(c)
 		}
 	}
