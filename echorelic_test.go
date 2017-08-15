@@ -33,7 +33,7 @@ func (suite *TestSuite) TestUseMiddleware() {
 	req := httptest.NewRequest(echo.GET, "/", nil)
 	res := httptest.NewRecorder()
 	c := suite.e.NewContext(req, res)
-	txn := c.Get("transaction")
+	txn := c.Get("newRelicTransaction")
 	suite.IsType(t, txn)
 }
 
