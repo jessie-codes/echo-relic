@@ -28,7 +28,7 @@ func main() {
 	e.Use(echorelic.Middleware(app))
 
 	e.GET("/", func(c echo.Context) error {
-		txn := c.Get("transaction")
+		txn := c.Get("newRelicTransaction")
 		//route handle code
 		return c.JSON(http.StatusOK, result)
 	})
