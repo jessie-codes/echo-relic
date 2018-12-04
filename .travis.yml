@@ -12,6 +12,7 @@ sudo: false
 
 install: true
 
-script:
+before_script:
   - env GO111MODULE=on go mod tidy
+script:
   - env GO111MODULE=on go test
