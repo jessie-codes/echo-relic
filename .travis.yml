@@ -1,8 +1,17 @@
 language: go
 go:
-  - 1.7.x
+  - 1.10.x
   - master
-install:
-  - go get github.com/labstack/echo
-  - go get github.com/newrelic/go-agent
-  - go get github.com/stretchr/testify/suite
+
+os:
+  - linux
+  - osx
+
+dist: trusty
+sudo: false
+
+install: true
+
+script:
+  - env GO111MODULE=on go build 
+  - env GO111MODULE=on go test
