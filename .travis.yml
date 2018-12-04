@@ -1,6 +1,5 @@
 language: go
 go:
-  - 1.10.x
   - master
 
 os:
@@ -14,5 +13,6 @@ install: true
 
 before_script:
   - env GO111MODULE=on go mod tidy
+
 script:
   - env GO111MODULE=on go test
