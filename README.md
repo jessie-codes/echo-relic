@@ -1,6 +1,9 @@
 # echo-relic
 Echo middleware for [New Relic](https://newrelic.com/)
 
+[![GoDoc](https://godoc.org/github.com/jessie-codes/echo-relic?status.svg)](https://godoc.org/github.com/jessie-codes/echo-relic)
+[![Build Status](https://travis-ci.org/jessie-codes/echo-relic.svg?branch=master)](https://travis-ci.org/jessie-codes/echo-relic)
+
 ## install
 
 `go get github.com/jessie-codes/echo-relic`
