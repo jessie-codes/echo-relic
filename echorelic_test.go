@@ -1,6 +1,7 @@
 package echorelic
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -21,7 +22,11 @@ func (suite *TestSuite) SetupTest() {
 		suite.Fail("Failed to create new EchoRelic")
 	}
 	suite.echoRelic = echoRelic
-	suite.e = echo.New()
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	suite.e = e
 }
 
 func (suite *TestSuite) TestUseMiddleware() {
@@ -32,6 +37,11 @@ func (suite *TestSuite) TestUseMiddleware() {
 	c := suite.e.NewContext(req, res)
 	txn := c.Get("newRelicTransaction")
 	suite.IsType(t, txn)
+}
+
+func (suite *TestSuite) TestBadConfig() {
+	_, err := New("test", "1234567890")
+	suite.Error(err, "Should error when a key is passed with an invalid length")
 }
 
 func TestMethodSuite(t *testing.T) {
