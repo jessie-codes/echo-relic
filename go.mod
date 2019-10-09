@@ -1,4 +1,6 @@
-module github.com/jessie-codes/echo-relic
+module github.com/jessie-codes/echo-relic/v3
+
+go 1.13
 
 go 1.13
 
