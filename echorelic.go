@@ -2,25 +2,37 @@ package echorelic
 
 import (
 	"github.com/labstack/echo"
-	"github.com/newrelic/go-agent"
+	newrelic "github.com/newrelic/go-agent"
 )
 
-var ctxKey = "newRelicTransaction"
+//EchoRelic stores the configured newrelic.Application
+type EchoRelic struct {
+	app newrelic.Application
+}
 
-// Middleware starts a newrelic.Transactions and adds it to the request's echo.Context
-func Middleware(app newrelic.Application) echo.MiddlewareFunc {
-	return func(h echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			name := c.Request().Method + " " + c.Path()
-			txn := app.StartTransaction(name, c.Response().Writer, c.Request())
-			txn.AddAttribute("RealIP", c.RealIP())
-			txn.AddAttribute("IsTLS", c.IsTLS())
-			txn.AddAttribute("IsWebSocket", c.IsWebSocket())
-			txn.AddAttribute("Query", c.QueryString())
-			defer txn.End()
+//New creates an instance of type EchoRelic
+func New(appName, licenseKey string) (*EchoRelic, error) {
+	config := newrelic.NewConfig(appName, licenseKey)
+	app, err := newrelic.NewApplication(config)
+	if err != nil {
+		return nil, err
+	}
+	return &EchoRelic{
+		app: app,
+	}, nil
+}
 
-			c.Set(ctxKey, txn)
-			return h(c)
-		}
+//Transaction is an echo middleware function which creates a new transaction for each request
+func (e *EchoRelic) Transaction(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		name := c.Request().Method + " " + c.Path()
+		txn := e.app.StartTransaction(name, c.Response().Writer, c.Request())
+		txn.AddAttribute("RealIP", c.RealIP())
+		txn.AddAttribute("IsTLS", c.IsTLS())
+		txn.AddAttribute("IsWebSocket", c.IsWebSocket())
+		txn.AddAttribute("Query", c.QueryString())
+		defer txn.End()
+		next(c)
+		return nil
 	}
 }
