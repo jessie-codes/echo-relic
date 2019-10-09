@@ -20,7 +20,7 @@ package main
 import (
 	"github.com/labstack/echo"
 	"github.com/newrelic/go-agent"
-	"github.com/jessie-codes/echo-relic"
+	"github.com/jessie-codes/echo-relic/v3"
 )
 
 func main() {
