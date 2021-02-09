@@ -7,6 +7,6 @@ require (
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/newrelic/go-agent v3.9.0+incompatible
 	github.com/newrelic/go-agent/v3 v3.8.1
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20191002192127-34f69633bfdc // indirect
 )
